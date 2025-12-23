@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TON Play Clone | Telegram Casino</title>
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Payment System (добавьте этот файл позже) -->
+    <!-- <script src="payments.js"></script> -->
+</head>
+<body>
+    <!-- Уведомления -->
+    <div id="notification" class="notification"></div>
+    
+    <!-- Модальное окно платежей (будет показываться при нажатии на кнопки) -->
+    <div id="paymentModal" class="modal" style="display: none;"></div>
+    
+    <!-- Основной контейнер -->
+    <div class="app-container" id="appContainer">
+        
+        <!-- Шапка с балансом -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo" onclick="toggleAdminPanel()">
+                    <i class="fas fa-coins"></i>
+                    <span>TON Play</span>
+                </div>
+                <div class="user-info">
+                    <div class="avatar">
+                        <i class="fas fa-user" id="userAvatar"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="username" id="username">Загрузка...</div>
+                        <div class="user-id" id="userId">ID: ---</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="balance-card">
+                    <div class="balance-label">Баланс</div>
+                    <div class="balance-amount">
+                        <i class="fas fa-wallet"></i>
+                        <span id="currentBalance">0</span>
+                        <span class="currency">TON</span>
+                    </div>
+                    <div class="balance-actions">
+                        <button class="btn btn-deposit" onclick="showDepositModal()">
+                            <i class="fas fa-plus"></i> Пополнить
+                        </button>
+                        <button class="btn btn-withdraw" onclick="showWithdrawModal()">
+                            <i class="fas fa-arrow-up"></i> Вывести
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Основной контент -->
+        <main class="main-content">
+            
+            <!-- Приветственная секция -->
+            <section class="welcome-section">
+                <div class="welcome-card">
+                    <h2 id="welcomeMessage">Добро пожаловать!</h2>
+                    <p>Играйте и выигрывайте в самых популярных играх на TON</p>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="onlinePlayers">1,234</div>
+                            <div class="stat-label">Игроков онлайн</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalWins">5.2M</div>
+                            <div class="stat-label">Выиграно TON</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="gamesToday">12,456</div>
+                            <div class="stat-label">Игр сегодня</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Игры -->
+            <section class="games-section">
+                <h3 class="section-title">
+                    <i class="fas fa-gamepad"></i> Доступные игры
+                </h3>
+                
+                <div class="games-grid" id="gamesGrid">
+                    <!-- Игры будут добавляться через JavaScript -->
+                </div>
+            </section>
+
+            <!-- История игр -->
+            <section class="history-section">
+                <h3 class="section-title">
+                    <i class="fas fa-history"></i> Ваша история
+                </h3>
+                <div class="history-list" id="gameHistory">
+                    <!-- История будет добавляться через JavaScript -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Навигация -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active" onclick="switchTab('games')">
+                <i class="fas fa-gamepad"></i>
+                <span>Игры</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('history')">
+                <i class="fas fa-history"></i>
+                <span>История</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('profile')">
+                <i class="fas fa-user"></i>
+                <span>Профиль</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('support')">
+                <i class="fas fa-headset"></i>
+                <span>Поддержка</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Скрытая админ-панель (открывается по тройному клику на лого) -->
+    <div id="adminPanel" class="admin-panel" style="display: none;">
+        <!-- Содержимое будет добавляться через JavaScript -->
+    </div>
+
+    <!-- Подключаем скрипты -->
+    <script src="app.js"></script>
+    <!-- Платежная система подключится позже -->
+</body>
+</html>
