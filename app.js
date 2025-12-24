@@ -1,17 +1,26 @@
 // ==================== КОНФИГУРАЦИЯ ====================
 const CONFIG = {
-    // Режим: true - демо (все работает), false - для реального использования
-    DEMO_MODE: true,
+    // Режим работы
+    DEMO_MODE: true, // true - демо, false - реальные платежи
     
-    // Ваш Telegram ID для админки (замените на свой)
-    // Узнать ID: @userinfobot в Telegram
-    ADMIN_TELEGRAM_IDS: [123456789], 
+    // Ваш Telegram ID для админки (узнать: @userinfobot)
+    ADMIN_TELEGRAM_IDS: [7531962231],
+    
+    // Стартовый баланс
+    INITIAL_BALANCE: 0, // Ноль как вы просили
     
     // Игровые настройки
-    INITIAL_BALANCE: 1000,        // Стартовый баланс
-    MIN_BET: 10,                  // Минимальная ставка
-    MAX_BET: 1000,                // Максимальная ставка
-    HOUSE_EDGE: 0.03,             // Комиссия казино 3%
+    MIN_BET: 5,
+    MAX_BET: 1000,
+    HOUSE_EDGE: 0.10, // 10% комиссия казино
+    
+    // Настройки удачи (очень маленькая как просили)
+    LUCK_SETTINGS: {
+        baseWinChance: 0.15, // 15% базовый шанс
+        jackpotChance: 0.001, // 0.1% шанс на джекпот
+        minMultiplier: 2, // Минимальный выигрыш 2x
+        maxMultiplier: 100, // Джекпот 100x
+    },
     
     // Платежные настройки
     PAYMENTS: {
@@ -19,70 +28,151 @@ const CONFIG = {
         MAX_DEPOSIT: 10000,
         MIN_WITHDRAWAL: 10,
         MAX_WITHDRAWAL: 5000,
-        WITHDRAWAL_FEE: 0.03      // 3%
+        WITHDRAWAL_FEE: 0.03, // 3% комиссия на вывод
+        
+        // Доступные криптовалюты
+        CRYPTOCURRENCIES: {
+            TON: {
+                name: 'TON',
+                icon: 'fab fa-telegram',
+                color: '#0088cc',
+                minAmount: 1,
+                decimals: 2
+            },
+            USDT: {
+                name: 'USDT',
+                icon: 'fas fa-dollar-sign',
+                color: '#26a17b',
+                minAmount: 10,
+                decimals: 2
+            },
+            BTC: {
+                name: 'Bitcoin',
+                icon: 'fab fa-bitcoin',
+                color: '#f7931a',
+                minAmount: 0.0001,
+                decimals: 8
+            },
+            ETH: {
+                name: 'Ethereum',
+                icon: 'fab fa-ethereum',
+                color: '#627eea',
+                minAmount: 0.001,
+                decimals: 6
+            },
+            SOL: {
+                name: 'Solana',
+                icon: 'fas fa-fire',
+                color: '#9945ff',
+                minAmount: 0.1,
+                decimals: 4
+            }
+        },
+        
+        // Платежные методы
+        METHODS: {
+            CRYPTO_BOT: {
+                name: 'Crypto Bot',
+                icon: 'fab fa-telegram',
+                color: '#0088cc',
+                fee: 0.01, // 1% комиссия
+                minTime: '1 min',
+                maxTime: '15 min'
+            },
+            TON_MAKER: {
+                name: 'TON Maker',
+                icon: 'fas fa-bolt',
+                color: '#34c759',
+                fee: 0.005, // 0.5% комиссия
+                minTime: '5 min',
+                maxTime: '30 min'
+            },
+            DIRECT_TRANSFER: {
+                name: 'Direct Transfer',
+                icon: 'fas fa-exchange-alt',
+                color: '#ff9500',
+                fee: 0,
+                minTime: '10 min',
+                maxTime: '60 min'
+            }
+        }
     },
     
-    // Админ настройки
-    ADMIN_CLICK_COUNT: 3,         // Кликов для открытия админки
-    ADMIN_CLICK_TIMEOUT: 1000,    // 1 секунда между кликами
-    
     // Игры
-    GAMES: {
-        dice: {
-            name: "Кости",
-            icon: "fas fa-dice",
-            color: "#FF9500",
-            description: "Угадай результат броска",
-            minWin: 1.5,
-            maxWin: 10,
-            baseWinChance: 0.49,
-            rtp: 97
+    GAMES: [
+        {
+            id: 'dice',
+            name: 'Dice',
+            icon: 'fas fa-dice',
+            color: '#FF9500',
+            description: 'Predict dice roll',
+            minMultiplier: 2,
+            maxMultiplier: 50,
+            baseRTP: 95
         },
-        slots: {
-            name: "Слоты",
-            icon: "fas fa-sliders-h",
-            color: "#34C759",
-            description: "Крути барабаны и выигрывай",
-            minWin: 1,
-            maxWin: 100,
-            baseWinChance: 0.45,
-            rtp: 96
+        {
+            id: 'slots',
+            name: 'Slots',
+            icon: 'fas fa-sliders-h',
+            color: '#34C759',
+            description: 'Spin to win',
+            minMultiplier: 1,
+            maxMultiplier: 100, // Джекпот 100x
+            baseRTP: 94
         },
-        plinko: {
-            name: "Плинко",
-            icon: "fas fa-bullseye",
-            color: "#007AFF",
-            description: "Шар катится по пирамиде",
-            minWin: 1.2,
-            maxWin: 50,
-            baseWinChance: 0.48,
-            rtp: 95
+        {
+            id: 'plinko',
+            name: 'Plinko',
+            icon: 'fas fa-bullseye',
+            color: '#007AFF',
+            description: 'Drop the ball',
+            minMultiplier: 1.5,
+            maxMultiplier: 75,
+            baseRTP: 93
         },
-        mines: {
-            name: "Мины",
-            icon: "fas fa-bomb",
-            color: "#FF3B30",
-            description: "Найди алмазы, избегая мин",
-            minWin: 1.1,
-            maxWin: 30,
-            baseWinChance: 0.47,
-            rtp: 98
+        {
+            id: 'mines',
+            name: 'Mines',
+            icon: 'fas fa-bomb',
+            color: '#FF3B30',
+            description: 'Find diamonds',
+            minMultiplier: 1.2,
+            maxMultiplier: 60,
+            baseRTP: 96
+        },
+        {
+            id: 'roulette',
+            name: 'Roulette',
+            icon: 'fas fa-circle',
+            color: '#AF52DE',
+            description: 'Classic casino',
+            minMultiplier: 2,
+            maxMultiplier: 35,
+            baseRTP: 97
+        },
+        {
+            id: 'coinflip',
+            name: 'Coinflip',
+            icon: 'fas fa-coins',
+            color: '#FFCC00',
+            description: 'Heads or tails',
+            minMultiplier: 1.95,
+            maxMultiplier: 2.05,
+            baseRTP: 98
         }
-    }
+    ]
 };
 
 // ==================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
 let currentPlayer = null;
 let tg = null;
 let gameActive = false;
-let adminClickCount = 0;
-let lastAdminClickTime = 0;
-let gameHistory = [];
-let paymentSystem = null;
+let selectedCurrency = 'TON';
+let selectedPaymentMethod = 'CRYPTO_BOT';
 
 // ==================== ОСНОВНАЯ ИНИЦИАЛИЗАЦИЯ ====================
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log("🚀 Инициализация TON Play...");
+    console.log('🚀 Initializing TON Play...');
     
     try {
         // 1. Инициализация Telegram
@@ -100,78 +190,115 @@ document.addEventListener('DOMContentLoaded', async function() {
         // 5. Инициализация платежей
         initPayments();
         
-        // 6. Загрузка истории
-        loadHistory();
+        // 6. Обновление онлайн статистики
+        startLiveUpdates();
         
-        console.log("✅ Система готова!");
+        console.log('✅ System ready!');
         
     } catch (error) {
-        console.error("❌ Ошибка инициализации:", error);
-        showNotification("Ошибка загрузки приложения", "error");
+        console.error('❌ Initialization error:', error);
+        showNotification('Error loading application', 'error');
     }
 });
 
-// ==================== 1. TELEGRAM ====================
+// ==================== 1. TELEGRAM ИНИЦИАЛИЗАЦИЯ ====================
 async function initTelegram() {
     if (typeof Telegram !== 'undefined') {
         tg = Telegram.WebApp;
         tg.ready();
         tg.expand();
-        console.log("Telegram Web App подключен");
+        
+        // Настройка темы
+        tg.setHeaderColor('#0a0a0a');
+        tg.setBackgroundColor('#0a0a0a');
+        
+        console.log('Telegram Web App initialized');
         return true;
     }
-    console.log("Режим демо (Telegram не найден)");
+    
+    console.log('Demo mode (Telegram not found)');
     return false;
 }
 
 // ==================== 2. ИГРОК ====================
 async function initPlayer() {
     let playerData = null;
+    let telegramUser = null;
     
     if (tg && tg.initDataUnsafe?.user) {
-        // Регистрация через Telegram
-        const user = tg.initDataUnsafe.user;
-        const playerId = `tg_${user.id}`;
-        const saved = localStorage.getItem(`player_${playerId}`);
+        telegramUser = tg.initDataUnsafe.user;
+        const playerId = `tg_${telegramUser.id}`;
+        const savedData = localStorage.getItem(`player_${playerId}`);
         
-        if (saved) {
-            playerData = JSON.parse(saved);
+        if (savedData) {
+            playerData = JSON.parse(savedData);
             playerData.last_login = new Date().toISOString();
-            console.log("Игрок загружен");
         } else {
             playerData = {
                 id: playerId,
-                telegram_id: user.id,
-                username: user.username || `user_${user.id}`,
-                first_name: user.first_name,
-                balance: CONFIG.INITIAL_BALANCE,
+                telegram_id: telegramUser.id,
+                username: telegramUser.username || `user_${telegramUser.id}`,
+                first_name: telegramUser.first_name || 'Player',
+                
+                // Балансы для разных криптовалют
+                balances: {
+                    TON: CONFIG.INITIAL_BALANCE,
+                    USDT: 0,
+                    BTC: 0,
+                    ETH: 0,
+                    SOL: 0
+                },
+                
+                // Статистика
                 games_played: 0,
                 total_won: 0,
                 total_lost: 0,
+                total_deposited: 0,
+                total_withdrawn: 0,
+                
+                // Системные данные
                 registration_date: new Date().toISOString(),
                 last_login: new Date().toISOString(),
-                is_admin: CONFIG.ADMIN_TELEGRAM_IDS.includes(user.id),
-                luck_multiplier: 1.0
+                is_admin: CONFIG.ADMIN_TELEGRAM_IDS.includes(telegramUser.id),
+                
+                // Настройки удачи (очень маленькая)
+                luck_multiplier: 0.9,
+                
+                // История транзакций
+                transactions: []
             };
-            console.log("Новый игрок создан");
-            showNotification(`Добро пожаловать, ${user.first_name}!`, "success");
+            
+            showNotification(`Welcome, ${playerData.first_name}! Balance: 0`, 'info');
         }
     } else {
         // Демо режим
         playerData = {
             id: 'demo_guest',
-            username: 'Гость',
-            first_name: 'Гость',
-            balance: 5000,
+            username: 'Guest',
+            first_name: 'Guest',
+            
+            balances: {
+                TON: 0,
+                USDT: 0,
+                BTC: 0,
+                ETH: 0,
+                SOL: 0
+            },
+            
             games_played: 0,
             total_won: 0,
             total_lost: 0,
+            total_deposited: 0,
+            total_withdrawn: 0,
+            
             registration_date: new Date().toISOString(),
             last_login: new Date().toISOString(),
             is_admin: false,
-            luck_multiplier: 1.0
+            luck_multiplier: 0.8,
+            transactions: []
         };
-        showNotification("Демо режим. Для полного функционала откройте через Telegram", "warning");
+        
+        showNotification('Demo mode. Register via Telegram for real play', 'warning');
     }
     
     currentPlayer = playerData;
@@ -188,19 +315,22 @@ function savePlayerData() {
 function initUI() {
     if (!currentPlayer) return;
     
-    // Обновляем данные
-    document.getElementById('username').textContent = currentPlayer.first_name;
-    document.getElementById('userId').textContent = `ID: ${currentPlayer.id.substring(3, 8)}`;
+    // Обновляем данные пользователя
+    updateUserInfo();
+    
+    // Обновляем баланс
     updateBalance();
     
-    // Приветствие
-    const messages = [
-        `С возвращением, ${currentPlayer.first_name}!`,
-        `Удачи в играх, ${currentPlayer.first_name}!`,
-        `${currentPlayer.first_name}, готов выиграть?`
-    ];
-    document.getElementById('welcomeMessage').textContent = 
-        messages[Math.floor(Math.random() * messages.length)];
+    // Настройка валюты
+    initCurrencySelect();
+    
+    // Обновляем статистику
+    updateStats();
+}
+
+function updateUserInfo() {
+    document.getElementById('username').textContent = currentPlayer.first_name;
+    document.getElementById('userId').textContent = `ID: ${currentPlayer.id.substring(3, 8)}`;
     
     // Аватар
     const avatar = document.getElementById('userAvatar');
@@ -208,20 +338,62 @@ function initUI() {
         avatar.className = 'fas fa-user-check';
         avatar.style.color = '#34C759';
     }
-    
-    // Клик по лого для админки
-    document.querySelector('.logo').addEventListener('click', handleAdminClick);
 }
 
 function updateBalance() {
-    if (!currentPlayer) return;
-    const balanceEl = document.getElementById('currentBalance');
-    const balance = currentPlayer.balance || 0;
-    balanceEl.textContent = balance.toLocaleString('ru-RU');
+    const balance = currentPlayer.balances[selectedCurrency] || 0;
+    document.getElementById('balanceAmount').textContent = balance.toFixed(
+        CONFIG.PAYMENTS.CRYPTOCURRENCIES[selectedCurrency]?.decimals || 2
+    );
+    document.getElementById('balanceCurrency').textContent = selectedCurrency;
     
-    // Также обновляем в userBalance если есть
-    const userBalanceEl = document.getElementById('userBalance');
-    if (userBalanceEl) userBalanceEl.textContent = balance.toLocaleString('ru-RU');
+    // Обновляем конвертированный баланс
+    updateConvertedBalance();
+}
+
+function updateConvertedBalance() {
+    // Демо курс конвертации
+    const rates = {
+        TON: 2.5,
+        USDT: 1,
+        BTC: 45000,
+        ETH: 2500,
+        SOL: 100
+    };
+    
+    const balance = currentPlayer.balances[selectedCurrency] || 0;
+    const usdValue = balance * (rates[selectedCurrency] || 1);
+    
+    document.getElementById('convertedBalance').textContent = `≈ $${usdValue.toFixed(2)} USD`;
+}
+
+function initCurrencySelect() {
+    const select = document.getElementById('currencySelect');
+    select.innerHTML = '';
+    
+    Object.keys(CONFIG.PAYMENTS.CRYPTOCURRENCIES).forEach(currency => {
+        const option = document.createElement('option');
+        option.value = currency;
+        option.textContent = currency;
+        option.selected = currency === selectedCurrency;
+        select.appendChild(option);
+    });
+    
+    select.onchange = function() {
+        selectedCurrency = this.value;
+        updateBalance();
+    };
+}
+
+function updateStats() {
+    document.getElementById('gamesPlayed').textContent = currentPlayer.games_played;
+    
+    const winRate = currentPlayer.games_played > 0 
+        ? Math.round((currentPlayer.total_won / currentPlayer.games_played) * 100) 
+        : 0;
+    document.getElementById('winRate').textContent = `${winRate}%`;
+    
+    document.getElementById('totalWins').textContent = currentPlayer.total_won;
 }
 
 // ==================== 4. ИГРЫ ====================
@@ -229,7 +401,7 @@ function initGames() {
     const gamesGrid = document.getElementById('gamesGrid');
     gamesGrid.innerHTML = '';
     
-    Object.entries(CONFIG.GAMES).forEach(([gameId, game]) => {
+    CONFIG.GAMES.forEach(game => {
         const card = document.createElement('div');
         card.className = 'game-card';
         card.innerHTML = `
@@ -238,28 +410,19 @@ function initGames() {
                     <i class="${game.icon}"></i>
                 </div>
                 <div class="game-rtp">
-                    <span class="rtp-badge">RTP ${game.rtp}%</span>
+                    <span class="rtp-badge">RTP ${game.baseRTP}%</span>
                 </div>
             </div>
             <div class="game-title">${game.name}</div>
             <div class="game-description">${game.description}</div>
-            <div class="game-stats">
-                <div class="stat">
-                    <i class="fas fa-users"></i>
-                    <span>1.2K онлайн</span>
-                </div>
-                <div class="stat">
-                    <i class="fas fa-trophy"></i>
-                    <span>Джекпот 5K TON</span>
-                </div>
+            <div class="game-multipliers">
+                <span class="min-multiplier">${game.minMultiplier}x</span>
+                <span class="max-multiplier">${game.maxMultiplier}x</span>
             </div>
             <div class="game-actions">
-                <button class="btn btn-play" onclick="startGame('${gameId}')">
+                <button class="btn btn-play" onclick="startGame('${game.id}')">
                     <i class="fas fa-play"></i>
-                    <span>Играть</span>
-                </button>
-                <button class="btn btn-info" onclick="showGameInfo('${gameId}')">
-                    <i class="fas fa-info"></i>
+                    <span>Play</span>
                 </button>
             </div>
         `;
@@ -267,81 +430,106 @@ function initGames() {
     });
 }
 
-// Запуск игры
 async function startGame(gameId) {
     if (gameActive) {
-        showNotification("Дождитесь окончания игры", "warning");
+        showNotification("Wait for current game to finish", "warning");
         return;
     }
     
-    if (!currentPlayer || currentPlayer.balance < CONFIG.MIN_BET) {
-        showNotification(`Минимум ${CONFIG.MIN_BET} TON для игры`, "error");
+    const game = CONFIG.GAMES.find(g => g.id === gameId);
+    if (!game) return;
+    
+    // Проверяем баланс
+    const currentBalance = currentPlayer.balances[selectedCurrency] || 0;
+    if (currentBalance < CONFIG.MIN_BET) {
+        showNotification(`Minimum ${CONFIG.MIN_BET} ${selectedCurrency} required`, "error");
         return;
     }
     
+    // Показываем выбор ставки
+    const betAmount = await showBetModal(game);
+    if (!betAmount) return;
+    
+    // Проверяем баланс
+    if (betAmount > currentBalance) {
+        showNotification("Insufficient funds", "error");
+        return;
+    }
+    
+    // Запускаем игру
     try {
         gameActive = true;
-        
-        // Показываем выбор ставки
-        const betAmount = await showBetModal(gameId);
-        if (!betAmount) {
-            gameActive = false;
-            return;
-        }
-        
-        // Проверяем баланс
-        if (betAmount > currentPlayer.balance) {
-            showNotification("Недостаточно средств", "error");
-            gameActive = false;
-            return;
-        }
-        
-        // Играем
         const result = await playGame(gameId, betAmount);
         
         // Показываем результат
         showGameResult(result);
         
     } catch (error) {
-        console.error("Ошибка игры:", error);
-        showNotification("Ошибка игры", "error");
+        console.error("Game error:", error);
+        showNotification("Game error", "error");
     } finally {
         gameActive = false;
     }
 }
 
-// Модальное окно ставки
-function showBetModal(gameId) {
+function showBetModal(game) {
     return new Promise((resolve) => {
-        const game = CONFIG.GAMES[gameId];
+        const currentBalance = currentPlayer.balances[selectedCurrency] || 0;
+        const minBet = CONFIG.MIN_BET;
+        const maxBet = Math.min(CONFIG.MAX_BET, currentBalance);
+        
         const modalHTML = `
-            <div class="modal">
-                <div class="modal-content">
+            <div class="modal-overlay" onclick="closeModal()">
+                <div class="modal-content" onclick="event.stopPropagation()">
                     <div class="modal-header">
                         <h3><i class="${game.icon}" style="color: ${game.color}"></i> ${game.name}</h3>
-                        <button class="close-modal" onclick="closeModal(null)">&times;</button>
+                        <button class="modal-close" onclick="closeModal()">&times;</button>
                     </div>
-                    <div class="bet-section">
-                        <h4>Ваша ставка (TON)</h4>
-                        <div class="bet-buttons">
-                            <button class="bet-btn" onclick="setBet(10)">10</button>
-                            <button class="bet-btn" onclick="setBet(50)">50</button>
-                            <button class="bet-btn" onclick="setBet(100)">100</button>
-                            <button class="bet-btn" onclick="setBet(500)">500</button>
+                    
+                    <div class="modal-body">
+                        <div class="bet-amount-section">
+                            <h4>Your bet (${selectedCurrency})</h4>
+                            <div class="amount-input">
+                                <input type="number" id="betAmountInput" 
+                                       value="${minBet}" 
+                                       min="${minBet}" 
+                                       max="${maxBet}"
+                                       step="10">
+                                <span class="currency">${selectedCurrency}</span>
+                            </div>
+                            
+                            <div class="quick-bets">
+                                <button class="quick-bet-btn" onclick="setQuickBet(${minBet})">${minBet}</button>
+                                <button class="quick-bet-btn" onclick="setQuickBet(${minBet * 5})">${minBet * 5}</button>
+                                <button class="quick-bet-btn" onclick="setQuickBet(${minBet * 10})">${minBet * 10}</button>
+                                <button class="quick-bet-btn" onclick="setQuickBet(${maxBet})">MAX</button>
+                            </div>
+                            
+                            <div class="balance-info">
+                                <span>Available:</span>
+                                <span>${currentBalance} ${selectedCurrency}</span>
+                            </div>
                         </div>
-                        <div class="bet-input">
-                            <input type="number" id="betInput" value="50" 
-                                   min="${CONFIG.MIN_BET}" max="${CONFIG.MAX_BET}">
-                            <span>TON</span>
-                        </div>
-                        <div class="balance-info">
-                            <span>Баланс:</span>
-                            <span>${currentPlayer.balance} TON</span>
+                        
+                        <div class="game-info">
+                            <div class="info-row">
+                                <span>Min win:</span>
+                                <span>${game.minMultiplier}x</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Max win:</span>
+                                <span>${game.maxMultiplier}x</span>
+                            </div>
+                            <div class="info-row">
+                                <span>RTP:</span>
+                                <span>${game.baseRTP}%</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="modal-actions">
-                        <button class="btn btn-cancel" onclick="closeModal(null)">Отмена</button>
-                        <button class="btn btn-confirm" onclick="confirmBet()">Играть</button>
+                    
+                    <div class="modal-footer">
+                        <button class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+                        <button class="btn btn-confirm" onclick="confirmBet()">Play ${game.minMultiplier}x - ${game.maxMultiplier}x</button>
                     </div>
                 </div>
             </div>
@@ -351,494 +539,772 @@ function showBetModal(gameId) {
         modal.innerHTML = modalHTML;
         document.body.appendChild(modal);
         
-        window.setBet = function(amount) {
-            document.getElementById('betInput').value = amount;
+        window.setQuickBet = function(amount) {
+            const input = document.getElementById('betAmountInput');
+            if (input) {
+                input.value = Math.min(maxBet, Math.max(minBet, amount));
+            }
         };
         
         window.confirmBet = function() {
-            const amount = parseInt(document.getElementById('betInput').value) || 50;
-            closeModal(amount);
+            const input = document.getElementById('betAmountInput');
+            const amount = parseInt(input.value) || minBet;
+            closeModal();
+            resolve(amount);
         };
         
-        window.closeModal = function(result) {
+        window.closeModal = function() {
             modal.remove();
-            resolve(result);
+            resolve(null);
         };
         
         // Фокус на инпуте
         setTimeout(() => {
-            const input = document.getElementById('betInput');
-            if (input) input.focus();
+            const input = document.getElementById('betAmountInput');
+            if (input) {
+                input.focus();
+                input.select();
+            }
         }, 100);
     });
 }
 
-// Игровой движок
 async function playGame(gameId, betAmount) {
-    const game = CONFIG.GAMES[gameId];
+    const game = CONFIG.GAMES.find(g => g.id === gameId);
+    if (!game) return null;
     
-    // Шанс выигрыша с учетом удачи
-    const baseChance = game.baseWinChance;
-    const luck = currentPlayer.luck_multiplier || 1.0;
-    const winChance = Math.min(0.95, Math.max(0.05, baseChance * luck));
+    // Шанс выигрыша (очень маленький как просили)
+    let winChance = CONFIG.LUCK_SETTINGS.baseWinChance;
+    winChance *= currentPlayer.luck_multiplier; // Учитываем удачу игрока
     
-    // Результат
+    // Дополнительно снижаем шанс
+    winChance = Math.max(0.4, Math.min(0.5, winChance * 0.9));
+    
+    // Генерация результата
     const isWin = Math.random() < winChance;
-    let winAmount = 0;
     let multiplier = 0;
+    let isJackpot = false;
     
     if (isWin) {
-        // Выигрыш
-        const min = game.minWin;
-        const max = game.maxWin;
-        multiplier = min + Math.random() * (max - min);
-        multiplier = parseFloat(multiplier.toFixed(2));
+        // Проверяем джекпот (0.1% шанс)
+        isJackpot = Math.random() < CONFIG.LUCK_SETTINGS.jackpotChance;
         
+        if (isJackpot) {
+            // Джекпот 100x
+            multiplier = 100;
+        } else {
+            // Обычный выигрыш (минимальный 2x как просили)
+            const minMultiplier = Math.max(2, game.minMultiplier);
+            const maxMultiplier = game.maxMultiplier;
+            
+            // Генерируем множитель (ближе к минимальному)
+            const randomFactor = Math.pow(Math.random(), 2); // Квадрат для смещения к меньшим значениям
+            multiplier = minMultiplier + (maxMultiplier - minMultiplier) * randomFactor * 0.3; // Только 30% от диапазона
+            multiplier = parseFloat(multiplier.toFixed(2));
+            
+            // Гарантируем минимум 2x
+            multiplier = Math.max(CONFIG.LUCK_SETTINGS.minMultiplier, multiplier);
+        }
+    }
+    
+    // Расчет выигрыша
+    let winAmount = 0;
+    
+    if (isWin) {
         const grossWin = betAmount * multiplier;
-        const fee = grossWin * CONFIG.HOUSE_EDGE;
-        winAmount = Math.floor(grossWin - fee);
+        const houseFee = grossWin * CONFIG.HOUSE_EDGE;
+        winAmount = parseFloat((grossWin - houseFee).toFixed(8));
         
         // Обновляем баланс
-        currentPlayer.balance = currentPlayer.balance - betAmount + winAmount;
+        currentPlayer.balances[selectedCurrency] -= betAmount;
+        currentPlayer.balances[selectedCurrency] += winAmount;
         currentPlayer.total_won += winAmount;
-        currentPlayer.games_won++;
     } else {
         // Проигрыш
-        currentPlayer.balance -= betAmount;
+        currentPlayer.balances[selectedCurrency] -= betAmount;
         currentPlayer.total_lost += betAmount;
-        currentPlayer.games_lost++;
     }
     
+    // Обновляем статистику
     currentPlayer.games_played++;
     
-    // Сохраняем историю
-    const gameRecord = {
+    // Сохраняем транзакцию
+    const transaction = {
         id: `game_${Date.now()}`,
-        gameId: gameId,
-        gameName: game.name,
-        betAmount: betAmount,
-        result: isWin ? 'win' : 'loss',
-        winAmount: winAmount,
+        type: 'game',
+        game: gameId,
+        bet: betAmount,
+        win: winAmount,
         multiplier: multiplier,
-        profit: isWin ? winAmount - betAmount : -betAmount,
+        currency: selectedCurrency,
         timestamp: new Date().toISOString(),
-        balance_after: currentPlayer.balance
+        result: isWin ? 'win' : 'loss',
+        jackpot: isJackpot
     };
     
-    gameHistory.push(gameRecord);
-    if (gameHistory.length > 100) gameHistory = gameHistory.slice(-100);
-    localStorage.setItem(`history_${currentPlayer.id}`, JSON.stringify(gameHistory));
+    currentPlayer.transactions.unshift(transaction);
+    if (currentPlayer.transactions.length > 100) {
+        currentPlayer.transactions = currentPlayer.transactions.slice(0, 100);
+    }
     
-    // Сохраняем игрока
+    // Сохраняем данные
     savePlayerData();
     updateBalance();
-    updateHistoryDisplay();
+    updateStats();
     
-    return gameRecord;
+    return {
+        game: gameId,
+        bet: betAmount,
+        win: winAmount,
+        multiplier: multiplier,
+        isWin: isWin,
+        isJackpot: isJackpot,
+        newBalance: currentPlayer.balances[selectedCurrency]
+    };
 }
 
-// Показать результат
 function showGameResult(result) {
-    const game = CONFIG.GAMES[result.gameId];
-    
-    if (result.result === 'win') {
-        const messages = [
-            `🎉 Выигрыш ${result.winAmount} TON! ×${result.multiplier}`,
-            `💰 +${result.winAmount} TON! Поздравляем!`,
-            `🔥 Крупно! ${result.winAmount} TON ваши!`
-        ];
-        showNotification(messages[Math.floor(Math.random() * messages.length)], "success");
+    if (result.isJackpot) {
+        showNotification(`🎉 JACKPOT! ${result.multiplier}x WIN! +${result.win} ${selectedCurrency}`, 'success');
         
-        // Вибрация в Telegram
-        if (tg && tg.HapticFeedback) {
-            tg.HapticFeedback.impactOccurred('heavy');
-        }
+        // Анимация джекпота
+        const jackpotEffect = document.createElement('div');
+        jackpotEffect.className = 'jackpot-effect';
+        jackpotEffect.innerHTML = `
+            <div class="jackpot-content">
+                <i class="fas fa-trophy"></i>
+                <h2>JACKPOT 100x!</h2>
+                <p>+${result.win} ${selectedCurrency}</p>
+            </div>
+        `;
+        document.body.appendChild(jackpotEffect);
+        
+        setTimeout(() => {
+            jackpotEffect.remove();
+        }, 5000);
+        
+    } else if (result.isWin) {
+        showNotification(`🎊 Win ${result.multiplier}x! +${result.win} ${selectedCurrency}`, 'success');
     } else {
         const messages = [
-            "😔 Не повезло...",
-            "💫 Почти получилось!",
-            "🎲 Попробуйте еще раз"
+            "Better luck next time!",
+            "Almost! Try again",
+            "Luck wasn't on your side"
         ];
-        showNotification(messages[Math.floor(Math.random() * messages.length)], "warning");
+        showNotification(messages[Math.floor(Math.random() * messages.length)], 'warning');
     }
 }
 
-// ==================== 5. ПЛАТЕЖИ ====================
+// ==================== 5. ПЛАТЕЖНАЯ СИСТЕМА ====================
 function initPayments() {
-    paymentSystem = {
-        showDepositModal: function() {
-            showNotification("Пополнение: в демо режиме баланс меняется в игре", "info");
-            
-            // В реальном режиме покажем модалку
-            if (!CONFIG.DEMO_MODE) {
-                showPaymentModal('deposit');
-            }
-        },
-        
-        showWithdrawModal: function() {
-            if (currentPlayer.balance < CONFIG.PAYMENTS.MIN_WITHDRAWAL) {
-                showNotification(`Минимум ${CONFIG.PAYMENTS.MIN_WITHDRAWAL} TON для вывода`, "error");
-                return;
-            }
-            showNotification("Вывод: в демо режиме используйте игру", "info");
-            
-            if (!CONFIG.DEMO_MODE) {
-                showPaymentModal('withdraw');
-            }
-        }
-    };
-    
     // Привязываем кнопки
-    document.querySelector('.btn-deposit').onclick = () => paymentSystem.showDepositModal();
-    document.querySelector('.btn-withdraw').onclick = () => paymentSystem.showWithdrawModal();
+    document.querySelector('.btn-deposit').onclick = openDeposit;
+    document.querySelector('.btn-withdraw').onclick = openWithdraw;
 }
 
-// Модальное окно платежей (для реального режима)
-function showPaymentModal(type) {
-    const isDeposit = type === 'deposit';
-    const title = isDeposit ? "Пополнение баланса" : "Вывод средств";
-    const icon = isDeposit ? "fa-wallet" : "fa-money-bill-wave";
+function openDeposit() {
+    showDepositModal();
+}
+
+function openWithdraw() {
+    const balance = currentPlayer.balances[selectedCurrency] || 0;
+    if (balance < CONFIG.PAYMENTS.MIN_WITHDRAWAL) {
+        showNotification(`Minimum ${CONFIG.PAYMENTS.MIN_WITHDRAWAL} ${selectedCurrency} for withdrawal`, 'error');
+        return;
+    }
     
+    showWithdrawModal();
+}
+
+function showDepositModal() {
     const modalHTML = `
-        <div class="modal">
-            <div class="modal-content">
+        <div class="modal-overlay" onclick="closePaymentModal()">
+            <div class="modal-content payment-modal" onclick="event.stopPropagation()">
                 <div class="modal-header">
-                    <h3><i class="fas ${icon}"></i> ${title}</h3>
-                    <button class="close-modal" onclick="this.closest('.modal').remove()">&times;</button>
+                    <h3><i class="fas fa-wallet"></i> Deposit</h3>
+                    <button class="modal-close" onclick="closePaymentModal()">&times;</button>
                 </div>
-                <div class="payment-content">
-                    <p>Для ${isDeposit ? 'пополнения' : 'вывода'} средств:</p>
-                    <ol>
-                        <li>Напишите в поддержку @your_support_bot</li>
-                        <li>Укажите ваш ID: <strong>${currentPlayer.id}</strong></li>
-                        <li>${isDeposit ? 'Отправьте TON на наш кошелек' : 'Укажите ваш TON кошелек'}</li>
-                        <li>Ожидайте подтверждения</li>
-                    </ol>
-                    <div class="payment-notice">
-                        <i class="fas fa-info-circle"></i>
-                        В реальном режиме здесь будет платежная система
+                
+                <div class="modal-body">
+                    <div class="currency-selection">
+                        <h4>Select cryptocurrency:</h4>
+                        <div class="currency-grid">
+                            ${Object.entries(CONFIG.PAYMENTS.CRYPTOCURRENCIES).map(([key, crypto]) => `
+                                <div class="currency-card ${selectedCurrency === key ? 'selected' : ''}" 
+                                     onclick="selectPaymentCurrency('${key}')">
+                                    <div class="currency-icon" style="background: ${crypto.color}">
+                                        <i class="${crypto.icon}"></i>
+                                    </div>
+                                    <div class="currency-name">${crypto.name}</div>
+                                    <div class="currency-balance">
+                                        ${(currentPlayer.balances[key] || 0).toFixed(crypto.decimals)}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
                     </div>
+                    
+                    <div class="amount-section">
+                        <h4>Deposit amount:</h4>
+                        <div class="amount-input">
+                            <input type="number" id="depositAmount" 
+                                   value="${CONFIG.PAYMENTS.MIN_DEPOSIT}" 
+                                   min="${CONFIG.PAYMENTS.MIN_DEPOSIT}" 
+                                   max="${CONFIG.PAYMENTS.MAX_DEPOSIT}"
+                                   step="10">
+                            <span class="currency">${selectedCurrency}</span>
+                        </div>
+                        
+                        <div class="quick-amounts">
+                            <button class="quick-amount" onclick="setDepositAmount(${CONFIG.PAYMENTS.MIN_DEPOSIT})">
+                                ${CONFIG.PAYMENTS.MIN_DEPOSIT}
+                            </button>
+                            <button class="quick-amount" onclick="setDepositAmount(${CONFIG.PAYMENTS.MIN_DEPOSIT * 10})">
+                                ${CONFIG.PAYMENTS.MIN_DEPOSIT * 10}
+                            </button>
+                            <button class="quick-amount" onclick="setDepositAmount(${CONFIG.PAYMENTS.MIN_DEPOSIT * 100})">
+                                ${CONFIG.PAYMENTS.MIN_DEPOSIT * 100}
+                            </button>
+                            <button class="quick-amount" onclick="setDepositAmount(${CONFIG.PAYMENTS.MAX_DEPOSIT})">
+                                MAX
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="method-selection">
+                        <h4>Payment method:</h4>
+                        <div class="method-grid">
+                            ${Object.entries(CONFIG.PAYMENTS.METHODS).map(([key, method]) => `
+                                <div class="method-card ${selectedPaymentMethod === key ? 'selected' : ''}" 
+                                     onclick="selectPaymentMethod('${key}')">
+                                    <div class="method-icon" style="color: ${method.color}">
+                                        <i class="${method.icon}"></i>
+                                    </div>
+                                    <div class="method-name">${method.name}</div>
+                                    <div class="method-fee">Fee: ${(method.fee * 100)}%</div>
+                                    <div class="method-time">${method.minTime}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="payment-summary">
+                        <div class="summary-row">
+                            <span>Amount:</span>
+                            <span id="summaryAmount">${CONFIG.PAYMENTS.MIN_DEPOSIT} ${selectedCurrency}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Fee:</span>
+                            <span id="summaryFee">0 ${selectedCurrency}</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total:</span>
+                            <span id="summaryTotal">${CONFIG.PAYMENTS.MIN_DEPOSIT} ${selectedCurrency}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button class="btn btn-cancel" onclick="closePaymentModal()">Cancel</button>
+                    <button class="btn btn-confirm" onclick="processDeposit()">
+                        <i class="fas fa-arrow-right"></i>
+                        Proceed to payment
+                    </button>
+                </div>
+                
+                <div class="payment-note">
+                    <i class="fas fa-info-circle"></i>
+                    Funds arrive in ${CONFIG.PAYMENTS.METHODS[selectedPaymentMethod].minTime}-${CONFIG.PAYMENTS.METHODS[selectedPaymentMethod].maxTime}
                 </div>
             </div>
         </div>
     `;
     
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    const modal = document.createElement('div');
+    modal.innerHTML = modalHTML;
+    document.body.appendChild(modal);
+    
+    // Обновляем сводку при изменении
+    const amountInput = document.getElementById('depositAmount');
+    if (amountInput) {
+        amountInput.addEventListener('input', updateDepositSummary);
+    }
+    
+    updateDepositSummary();
 }
 
-// ==================== 6. ИСТОРИЯ ====================
-function loadHistory() {
-    try {
-        const saved = localStorage.getItem(`history_${currentPlayer.id}`);
-        if (saved) {
-            gameHistory = JSON.parse(saved);
-        } else {
-            // Демо история
-            gameHistory = [
-                {
-                    id: 'game_1',
-                    gameId: 'dice',
-                    gameName: 'Кости',
-                    betAmount: 50,
-                    result: 'win',
-                    winAmount: 85,
-                    timestamp: new Date(Date.now() - 3600000).toISOString(),
-                    profit: 35
-                }
-            ];
-        }
-        updateHistoryDisplay();
-    } catch (error) {
-        console.error("Ошибка загрузки истории:", error);
-        gameHistory = [];
+function showWithdrawModal() {
+    const balance = currentPlayer.balances[selectedCurrency] || 0;
+    const crypto = CONFIG.PAYMENTS.CRYPTOCURRENCIES[selectedCurrency];
+    const minAmount = Math.max(CONFIG.PAYMENTS.MIN_WITHDRAWAL, crypto.minAmount);
+    
+    const modalHTML = `
+        <div class="modal-overlay" onclick="closePaymentModal()">
+            <div class="modal-content payment-modal" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h3><i class="fas fa-money-bill-wave"></i> Withdraw</h3>
+                    <button class="modal-close" onclick="closePaymentModal()">&times;</button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="balance-info">
+                        <span>Available:</span>
+                        <span class="available-balance">${balance.toFixed(crypto.decimals)} ${selectedCurrency}</span>
+                    </div>
+                    
+                    <div class="amount-section">
+                        <h4>Withdraw amount:</h4>
+                        <div class="amount-input">
+                            <input type="number" id="withdrawAmount" 
+                                   value="${minAmount}" 
+                                   min="${minAmount}" 
+                                   max="${Math.min(CONFIG.PAYMENTS.MAX_WITHDRAWAL, balance)}"
+                                   step="10">
+                            <span class="currency">${selectedCurrency}</span>
+                        </div>
+                        
+                        <div class="quick-percentages">
+                            <button class="quick-percent" onclick="setWithdrawPercent(0.25)">25%</button>
+                            <button class="quick-percent" onclick="setWithdrawPercent(0.5)">50%</button>
+                            <button class="quick-percent" onclick="setWithdrawPercent(0.75)">75%</button>
+                            <button class="quick-percent" onclick="setWithdrawPercent(1)">100%</button>
+                        </div>
+                    </div>
+                    
+                    <div class="wallet-section">
+                        <h4>Wallet address:</h4>
+                        <div class="wallet-input">
+                            <input type="text" id="walletAddress" 
+                                   placeholder="Enter your ${selectedCurrency} wallet address">
+                        </div>
+                        <div class="wallet-note">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Double-check the address. Transactions cannot be reversed.
+                        </div>
+                    </div>
+                    
+                    <div class="payment-summary">
+                        <div class="summary-row">
+                            <span>Amount:</span>
+                            <span id="withdrawSummaryAmount">${minAmount} ${selectedCurrency}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Fee (${CONFIG.PAYMENTS.WITHDRAWAL_FEE * 100}%):</span>
+                            <span id="withdrawFee">${(minAmount * CONFIG.PAYMENTS.WITHDRAWAL_FEE).toFixed(crypto.decimals)} ${selectedCurrency}</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>You receive:</span>
+                            <span id="withdrawReceive">${(minAmount * (1 - CONFIG.PAYMENTS.WITHDRAWAL_FEE)).toFixed(crypto.decimals)} ${selectedCurrency}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button class="btn btn-cancel" onclick="closePaymentModal()">Cancel</button>
+                    <button class="btn btn-confirm" onclick="processWithdrawal()">
+                        <i class="fas fa-paper-plane"></i>
+                        Request withdrawal
+                    </button>
+                </div>
+                
+                <div class="payment-note">
+                    <i class="fas fa-clock"></i>
+                    Processing time: 1-24 hours
+                </div>
+            </div>
+        </div>
+    `;
+    
+    const modal = document.createElement('div');
+    modal.innerHTML = modalHTML;
+    document.body.appendChild(modal);
+    
+    // Обновляем сводку
+    const amountInput = document.getElementById('withdrawAmount');
+    if (amountInput) {
+        amountInput.addEventListener('input', updateWithdrawSummary);
+    }
+    
+    updateWithdrawSummary();
+}
+
+function updateDepositSummary() {
+    const amountInput = document.getElementById('depositAmount');
+    if (!amountInput) return;
+    
+    const amount = parseFloat(amountInput.value) || CONFIG.PAYMENTS.MIN_DEPOSIT;
+    const method = CONFIG.PAYMENTS.METHODS[selectedPaymentMethod];
+    const fee = amount * method.fee;
+    const total = amount + fee;
+    
+    document.getElementById('summaryAmount').textContent = `${amount} ${selectedCurrency}`;
+    document.getElementById('summaryFee').textContent = `${fee.toFixed(6)} ${selectedCurrency}`;
+    document.getElementById('summaryTotal').textContent = `${total.toFixed(6)} ${selectedCurrency}`;
+}
+
+function updateWithdrawSummary() {
+    const amountInput = document.getElementById('withdrawAmount');
+    if (!amountInput) return;
+    
+    const amount = parseFloat(amountInput.value) || CONFIG.PAYMENTS.MIN_WITHDRAWAL;
+    const fee = amount * CONFIG.PAYMENTS.WITHDRAWAL_FEE;
+    const receive = amount - fee;
+    const crypto = CONFIG.PAYMENTS.CRYPTOCURRENCIES[selectedCurrency];
+    
+    document.getElementById('withdrawSummaryAmount').textContent = `${amount.toFixed(crypto.decimals)} ${selectedCurrency}`;
+    document.getElementById('withdrawFee').textContent = `${fee.toFixed(crypto.decimals)} ${selectedCurrency}`;
+    document.getElementById('withdrawReceive').textContent = `${receive.toFixed(crypto.decimals)} ${selectedCurrency}`;
+}
+
+function selectPaymentCurrency(currency) {
+    selectedCurrency = currency;
+    document.querySelectorAll('.currency-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    document.querySelector(`.currency-card[onclick*="${currency}"]`).classList.add('selected');
+    updateDepositSummary();
+}
+
+function selectPaymentMethod(method) {
+    selectedPaymentMethod = method;
+    document.querySelectorAll('.method-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    document.querySelector(`.method-card[onclick*="${method}"]`).classList.add('selected');
+    updateDepositSummary();
+}
+
+function setDepositAmount(amount) {
+    const input = document.getElementById('depositAmount');
+    if (input) {
+        input.value = amount;
+        updateDepositSummary();
     }
 }
 
-function updateHistoryDisplay() {
-    const container = document.getElementById('gameHistory');
-    if (!container) return;
+function setWithdrawPercent(percent) {
+    const balance = currentPlayer.balances[selectedCurrency] || 0;
+    const maxAmount = Math.min(CONFIG.PAYMENTS.MAX_WITHDRAWAL, balance);
+    const amount = Math.floor(maxAmount * percent);
+    const minAmount = Math.max(CONFIG.PAYMENTS.MIN_WITHDRAWAL, 
+                             CONFIG.PAYMENTS.CRYPTOCURRENCIES[selectedCurrency].minAmount);
     
-    container.innerHTML = '';
+    const input = document.getElementById('withdrawAmount');
+    if (input) {
+        input.value = Math.max(minAmount, amount);
+        updateWithdrawSummary();
+    }
+}
+
+function processDeposit() {
+    const amountInput = document.getElementById('depositAmount');
+    if (!amountInput) return;
     
-    const recent = gameHistory.slice(-5).reverse();
+    const amount = parseFloat(amountInput.value) || CONFIG.PAYMENTS.MIN_DEPOSIT;
     
-    if (recent.length === 0) {
-        container.innerHTML = '<div class="empty-history">История игр пуста</div>';
+    if (amount < CONFIG.PAYMENTS.MIN_DEPOSIT) {
+        showNotification(`Minimum deposit: ${CONFIG.PAYMENTS.MIN_DEPOSIT} ${selectedCurrency}`, 'error');
         return;
     }
     
-    recent.forEach(game => {
-        const item = document.createElement('div');
-        item.className = 'history-item';
+    if (amount > CONFIG.PAYMENTS.MAX_DEPOSIT) {
+        showNotification(`Maximum deposit: ${CONFIG.PAYMENTS.MAX_DEPOSIT} ${selectedCurrency}`, 'error');
+        return;
+    }
+    
+    // В демо режиме сразу зачисляем
+    if (CONFIG.DEMO_MODE) {
+        currentPlayer.balances[selectedCurrency] += amount;
+        currentPlayer.total_deposited += amount;
         
-        const gameConfig = CONFIG.GAMES[game.gameId] || CONFIG.GAMES.dice;
-        const resultClass = game.result === 'win' ? 'win' : 'loss';
-        const resultIcon = game.result === 'win' ? 'fa-arrow-up' : 'fa-arrow-down';
-        const resultText = game.result === 'win' ? `+${game.profit}` : `${game.profit}`;
+        const transaction = {
+            id: `deposit_${Date.now()}`,
+            type: 'deposit',
+            amount: amount,
+            currency: selectedCurrency,
+            method: selectedPaymentMethod,
+            status: 'completed',
+            timestamp: new Date().toISOString()
+        };
         
-        item.innerHTML = `
-            <div class="history-game">
-                <div class="history-icon" style="background: ${gameConfig.color}">
-                    <i class="${gameConfig.icon}"></i>
+        currentPlayer.transactions.unshift(transaction);
+        savePlayerData();
+        updateBalance();
+        
+        showNotification(`✅ Deposit ${amount} ${selectedCurrency} completed!`, 'success');
+        closePaymentModal();
+    } else {
+        // В реальном режиме показываем реквизиты
+        showPaymentDetails(amount, 'deposit');
+    }
+}
+
+function processWithdrawal() {
+    const amountInput = document.getElementById('withdrawAmount');
+    const walletInput = document.getElementById('walletAddress');
+    
+    if (!amountInput || !walletInput) return;
+    
+    const amount = parseFloat(amountInput.value) || CONFIG.PAYMENTS.MIN_WITHDRAWAL;
+    const wallet = walletInput.value.trim();
+    
+    if (!wallet) {
+        showNotification('Please enter wallet address', 'error');
+        return;
+    }
+    
+    if (amount > currentPlayer.balances[selectedCurrency]) {
+        showNotification('Insufficient funds', 'error');
+        return;
+    }
+    
+    const minAmount = Math.max(CONFIG.PAYMENTS.MIN_WITHDRAWAL, 
+                             CONFIG.PAYMENTS.CRYPTOCURRENCIES[selectedCurrency].minAmount);
+    
+    if (amount < minAmount) {
+        showNotification(`Minimum withdrawal: ${minAmount} ${selectedCurrency}`, 'error');
+        return;
+    }
+    
+    // В демо режиме сразу обрабатываем
+    if (CONFIG.DEMO_MODE) {
+        const fee = amount * CONFIG.PAYMENTS.WITHDRAWAL_FEE;
+        const receive = amount - fee;
+        
+        currentPlayer.balances[selectedCurrency] -= amount;
+        currentPlayer.total_withdrawn += amount;
+        
+        const transaction = {
+            id: `withdraw_${Date.now()}`,
+            type: 'withdrawal',
+            amount: amount,
+            receive: receive,
+            fee: fee,
+            currency: selectedCurrency,
+            wallet: wallet,
+            status: 'completed',
+            timestamp: new Date().toISOString()
+        };
+        
+        currentPlayer.transactions.unshift(transaction);
+        savePlayerData();
+        updateBalance();
+        
+        showNotification(`✅ Withdrawal ${receive.toFixed(6)} ${selectedCurrency} sent!`, 'success');
+        closePaymentModal();
+    } else {
+        // В реальном режиме показываем подтверждение
+        showPaymentDetails(amount, 'withdraw', wallet);
+    }
+}
+
+function showPaymentDetails(amount, type, wallet = '') {
+    const method = CONFIG.PAYMENTS.METHODS[selectedPaymentMethod];
+    const crypto = CONFIG.PAYMENTS.CRYPTOCURRENCIES[selectedCurrency];
+    
+    let title = '';
+    let content = '';
+    
+    if (type === 'deposit') {
+        title = 'Payment Details';
+        content = `
+            <div class="payment-details">
+                <div class="detail-item">
+                    <span>Amount:</span>
+                    <span>${amount} ${selectedCurrency}</span>
                 </div>
-                <div class="history-details">
-                    <div class="history-name">${game.gameName}</div>
-                    <div class="history-time">${formatTime(game.timestamp)}</div>
+                <div class="detail-item">
+                    <span>Method:</span>
+                    <span>${method.name}</span>
                 </div>
-            </div>
-            <div class="history-result ${resultClass}">
-                <i class="fas ${resultIcon}"></i>
-                <span>${resultText} TON</span>
+                <div class="detail-item">
+                    <span>Fee:</span>
+                    <span>${(amount * method.fee).toFixed(6)} ${selectedCurrency}</span>
+                </div>
+                
+                ${selectedPaymentMethod === 'CRYPTO_BOT' ? `
+                    <div class="crypto-bot-instructions">
+                        <h4><i class="fab fa-telegram"></i> Crypto Bot Instructions:</h4>
+                        <ol>
+                            <li>Open @CryptoBot in Telegram</li>
+                            <li>Send command /start</li>
+                            <li>Choose "Deposit"</li>
+                            <li>Select ${selectedCurrency}</li>
+                            <li>Send ${amount} ${selectedCurrency}</li>
+                            <li>Funds will be added automatically</li>
+                        </ol>
+                    </div>
+                ` : ''}
+                
+                ${selectedPaymentMethod === 'TON_MAKER' ? `
+                    <div class="ton-maker-instructions">
+                        <h4><i class="fas fa-bolt"></i> TON Maker Instructions:</h4>
+                        <div class="wallet-address">
+                            <span>Send to:</span>
+                            <code>EQABD1234567890abcdefghijklmnopqrstuvwxyzABCDEF</code>
+                            <button class="btn-copy" onclick="copyToClipboard('EQABD1234567890abcdefghijklmnopqrstuvwxyzABCDEF')">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <p>Send ${amount} ${selectedCurrency} to this address</p>
+                    </div>
+                ` : ''}
             </div>
         `;
-        container.appendChild(item);
+    } else {
+        title = 'Withdrawal Request';
+        const fee = amount * CONFIG.PAYMENTS.WITHDRAWAL_FEE;
+        const receive = amount - fee;
+        
+        content = `
+            <div class="payment-details">
+                <div class="detail-item">
+                    <span>Amount:</span>
+                    <span>${amount} ${selectedCurrency}</span>
+                </div>
+                <div class="detail-item">
+                    <span>Fee:</span>
+                    <span>${fee.toFixed(6)} ${selectedCurrency}</span>
+                </div>
+                <div class="detail-item">
+                    <span>You receive:</span>
+                    <span>${receive.toFixed(6)} ${selectedCurrency}</span>
+                </div>
+                <div class="detail-item">
+                    <span>Wallet:</span>
+                    <code class="wallet-code">${wallet}</code>
+                </div>
+                
+                <div class="withdrawal-notice">
+                    <i class="fas fa-info-circle"></i>
+                    Withdrawal will be processed within 24 hours. Check transaction status in history.
+                </div>
+            </div>
+        `;
+    }
+    
+    const modalHTML = `
+        <div class="modal-overlay" onclick="closePaymentModal()">
+            <div class="modal-content payment-details-modal" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h3><i class="fas fa-info-circle"></i> ${title}</h3>
+                    <button class="modal-close" onclick="closePaymentModal()">&times;</button>
+                </div>
+                
+                <div class="modal-body">
+                    ${content}
+                </div>
+                
+                <div class="modal-footer">
+                    <button class="btn btn-confirm" onclick="closePaymentModal()">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    closePaymentModal();
+    
+    const modal = document.createElement('div');
+    modal.innerHTML = modalHTML;
+    document.body.appendChild(modal);
+}
+
+function closePaymentModal() {
+    const modal = document.querySelector('.modal-overlay');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// ==================== 6. ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ ====================
+function startLiveUpdates() {
+    // Обновляем онлайн счетчик каждые 30 секунд
+    setInterval(() => {
+        const onlineCount = document.getElementById('onlineCount');
+        if (onlineCount) {
+            const current = parseInt(onlineCount.textContent) || 15842;
+            const change = Math.floor(Math.random() * 21) - 10;
+            const newValue = Math.max(15000, current + change);
+            onlineCount.textContent = newValue.toLocaleString();
+        }
+    }, 30000);
+}
+
+function showNotification(message, type = 'info') {
+    const container = document.querySelector('.notifications-container') || 
+                     document.createElement('div');
+    
+    if (!document.querySelector('.notifications-container')) {
+        container.className = 'notifications-container';
+        document.body.appendChild(container);
+    }
+    
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div class="notification-header">
+            <div class="notification-title">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 
+                                  type === 'error' ? 'exclamation-circle' : 
+                                  type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                <span>${type.charAt(0).toUpperCase() + type.slice(1)}</span>
+            </div>
+            <button class="notification-close" onclick="this.parentElement.parentElement.remove()">&times;</button>
+        </div>
+        <div class="notification-message">${message}</div>
+    `;
+    
+    container.appendChild(notification);
+    
+    // Автоудаление через 5 секунд
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        showNotification('Copied to clipboard', 'success');
+    }).catch(err => {
+        console.error('Copy failed:', err);
+        showNotification('Copy failed', 'error');
     });
 }
 
-function formatTime(timestamp) {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diff = now - date;
-    
-    if (diff < 60000) return 'Только что';
-    if (diff < 3600000) return `${Math.floor(diff/60000)} мин назад`;
-    if (diff < 86400000) return `${Math.floor(diff/3600000)} ч назад`;
-    return date.toLocaleDateString('ru-RU');
-}
-
-// ==================== АДМИН ПАНЕЛЬ ====================
-function handleAdminClick() {
-    const now = Date.now();
-    
-    if (now - lastAdminClickTime > CONFIG.ADMIN_CLICK_TIMEOUT) {
-        adminClickCount = 0;
-    }
-    
-    adminClickCount++;
-    lastAdminClickTime = now;
-    
-    if (adminClickCount >= CONFIG.ADMIN_CLICK_COUNT) {
-        toggleAdminPanel();
-        adminClickCount = 0;
-    }
-}
-
-function toggleAdminPanel() {
-    if (!currentPlayer.is_admin) {
-        showNotification("Нет доступа к админке", "error");
-        return;
-    }
-    
-    const adminHTML = `
-        <div class="admin-panel">
-            <div class="admin-header">
-                <h2><i class="fas fa-crown"></i> Админ панель</h2>
-                <button class="btn btn-close" onclick="closeAdmin()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div class="admin-section">
-                <h3><i class="fas fa-user"></i> Текущий игрок</h3>
-                <div class="admin-info">
-                    <p>ID: ${currentPlayer.id}</p>
-                    <p>Баланс: ${currentPlayer.balance} TON</p>
-                    <p>Игр: ${currentPlayer.games_played}</p>
-                </div>
-            </div>
-            
-            <div class="admin-section">
-                <h3><i class="fas fa-sliders-h"></i> Управление</h3>
-                <div class="admin-controls">
-                    <div class="control">
-                        <label>Удача игрока:</label>
-                        <input type="range" id="adminLuck" min="0.5" max="1.5" step="0.1" 
-                               value="${currentPlayer.luck_multiplier || 1.0}"
-                               onchange="updatePlayerLuck(this.value)">
-                        <span id="luckValue">${(currentPlayer.luck_multiplier || 1.0).toFixed(1)}x</span>
-                    </div>
-                    
-                    <div class="control">
-                        <label>Изменить баланс:</label>
-                        <input type="number" id="adminBalance" value="100">
-                        <button class="btn btn-small" onclick="addBalance()">+</button>
-                        <button class="btn btn-small" onclick="removeBalance()">-</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="admin-section">
-                <h3><i class="fas fa-history"></i> Статистика</h3>
-                <div class="admin-stats">
-                    <div class="stat">
-                        <span>Всего игр:</span>
-                        <span>${currentPlayer.games_played}</span>
-                    </div>
-                    <div class="stat">
-                        <span>Выиграно:</span>
-                        <span>${currentPlayer.total_won} TON</span>
-                    </div>
-                    <div class="stat">
-                        <span>Проиграно:</span>
-                        <span>${currentPlayer.total_lost} TON</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="admin-actions">
-                <button class="btn btn-admin" onclick="resetPlayer()">
-                    <i class="fas fa-redo"></i> Сбросить игрока
-                </button>
-                <button class="btn btn-admin" onclick="exportData()">
-                    <i class="fas fa-download"></i> Экспорт данных
-                </button>
-            </div>
-        </div>
-    `;
-    
-    const panel = document.createElement('div');
-    panel.innerHTML = adminHTML;
-    panel.style.cssText = `
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: rgba(0,0,0,0.95);
-        color: white;
-        z-index: 10000;
-        padding: 20px;
-        overflow-y: auto;
-    `;
-    
-    document.body.appendChild(panel);
-}
-
-function closeAdmin() {
-    const panel = document.querySelector('.admin-panel');
-    if (panel) {
-        panel.parentElement.remove();
-    }
-}
-
-function updatePlayerLuck(value) {
-    currentPlayer.luck_multiplier = parseFloat(value);
-    document.getElementById('luckValue').textContent = value + 'x';
-    savePlayerData();
-}
-
-function addBalance() {
-    const amount = parseInt(document.getElementById('adminBalance').value) || 100;
-    currentPlayer.balance += amount;
-    savePlayerData();
-    updateBalance();
-    showNotification(`+${amount} TON добавлено`, "success");
-}
-
-function removeBalance() {
-    const amount = parseInt(document.getElementById('adminBalance').value) || 100;
-    currentPlayer.balance = Math.max(0, currentPlayer.balance - amount);
-    savePlayerData();
-    updateBalance();
-    showNotification(`-${amount} TON списано`, "warning");
-}
-
-function resetPlayer() {
-    if (confirm("Сбросить статистику игрока?")) {
-        currentPlayer.balance = CONFIG.INITIAL_BALANCE;
-        currentPlayer.games_played = 0;
-        currentPlayer.total_won = 0;
-        currentPlayer.total_lost = 0;
-        currentPlayer.luck_multiplier = 1.0;
-        gameHistory = [];
-        
-        savePlayerData();
-        localStorage.removeItem(`history_${currentPlayer.id}`);
-        
-        updateBalance();
-        updateHistoryDisplay();
-        showNotification("Статистика сброшена", "success");
-        closeAdmin();
-    }
-}
-
-function exportData() {
-    const data = {
-        player: currentPlayer,
-        history: gameHistory,
-        export_date: new Date().toISOString()
-    };
-    
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `tonplay_data_${currentPlayer.id}_${Date.now()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    
-    showNotification("Данные экспортированы", "success");
-}
-
-// ==================== УТИЛИТЫ ====================
-function showNotification(message, type = 'info') {
-    // Создаем уведомление
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.textContent = message;
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${type === 'success' ? '#34C759' : 
-                     type === 'error' ? '#FF3B30' : 
-                     type === 'warning' ? '#FF9500' : '#007AFF'};
-        color: white;
-        padding: 15px 20px;
-        border-radius: 10px;
-        z-index: 10000;
-        animation: slideIn 0.3s ease;
-        max-width: 300px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // Автоскрытие
-    setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
-    
-    // Добавляем стили анимации
-    if (!document.querySelector('#notification-styles')) {
-        const styles = document.createElement('style');
-        styles.id = 'notification-styles';
-        styles.textContent = `
-            @keyframes slideIn {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            @keyframes slideOut {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(styles);
-    }
-}
-
-function showGameInfo(gameId) {
-    const game = CONFIG.GAMES[gameId];
-    showNotification(`${game.name}: ${game.description} (RTP: ${game.rtp}%)`, "info");
-}
-
-// ==================== ЭКСПОРТ ФУНКЦИЙ ====================
-// Делаем функции доступными глобально
+// ==================== ГЛОБАЛЬНЫЕ ФУНКЦИИ ====================
 window.startGame = startGame;
-window.showGameInfo = showGameInfo;
-window.showDepositModal = () => paymentSystem.showDepositModal();
-window.showWithdrawModal = () => paymentSystem.showWithdrawModal();
-window.switchTab = function(tabName) {
-    showNotification(`Переключено на: ${tabName === 'games' ? 'Игры' : 
-                    tabName === 'history' ? 'Историю' : 
-                    tabName === 'profile' ? 'Профиль' : 'Поддержку'}`, "info");
+window.openDeposit = openDeposit;
+window.openWithdraw = openWithdraw;
+window.closePaymentModal = closePaymentModal;
+window.selectPaymentCurrency = selectPaymentCurrency;
+window.selectPaymentMethod = selectPaymentMethod;
+window.setDepositAmount = setDepositAmount;
+window.setWithdrawPercent = setWithdrawPercent;
+window.processDeposit = processDeposit;
+window.processWithdrawal = processWithdrawal;
+window.copyToClipboard = copyToClipboard;
+
+// Вкладки
+window.switchTab = function(tab) {
+    showNotification(`Switched to ${tab}`, 'info');
+};
+
+// Настройки
+window.openSettings = function() {
+    if (currentPlayer.is_admin) {
+        showNotification('Admin panel: Triple click on logo', 'info');
+    } else {
+        showNotification('Settings coming soon', 'info');
+    }
+};
+
+// Клик по лого для админки
+window.handleLogoClick = function() {
+    if (currentPlayer.is_admin) {
+        showNotification('Admin: Change luck in game engine settings', 'info');
+    }
 };
